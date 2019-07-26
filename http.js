@@ -13,8 +13,8 @@ module.exports = start
 function start (entry, opts) {
   opts = opts || {}
 
-  assert.equal(typeof entry, 'string', 'bankai/http: entry should be type string')
-  assert.equal(typeof opts, 'object', 'bankai/http: opts should be type object')
+  assert.strictEqual(typeof entry, 'string', 'bankai/http: entry should be type string')
+  assert.strictEqual(typeof opts, 'object', 'bankai/http: opts should be type object')
 
   opts = Object.assign({ reload: true }, opts)
   var compiler = bankai(entry, opts)
@@ -34,6 +34,11 @@ function start (entry, opts) {
     var name = nodeName + ':' + edgeName
     if (name === 'documents:index.html') emitter.emit('documents:index.html', node)
     if (name === 'styles:bundle') emitter.emit('styles:bundle', node)
+  })
+
+  router.route(/^\/(favicon\.)(ico|png|gif)$/, function (req, res, params) {
+    var filename = params[1] + params[2]
+    pump(send(req, filename), res)
   })
 
   router.route(/^\/manifest\.json$/, function (req, res, params) {
